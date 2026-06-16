@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
-import joblib
-import plotly.graph_objects as go
-import numpy as np
 import base64
-
 
 # --- CONFIGURAÇÃO INICIAL ---
 st.set_page_config(page_title="Fake Wonka", page_icon="🍫", layout="wide", initial_sidebar_state="collapsed")
@@ -23,10 +19,11 @@ def carregar_imagem_base64(caminho):
     except FileNotFoundError:
         return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
 
-CAMINHO_DA_LOGO = "logo_sem_fundo.png" # Certifique-se de que o nome está correto
-logo_b64 = carregar_imagem_base64(CAMINHO_DA_LOGO)
+# Carregue as duas imagens agora (Ajuste os nomes para os seus arquivos reais)
+logo_b64 = carregar_imagem_base64("logo_sem_fundo.png")
+botao_saiba_mais_b64 = carregar_imagem_base64("botao_saiba_mais.png") # <--- NOVA IMAGEM AQUI
+botao_sobre_nos_b64 = carregar_imagem_base64("botao_sobre_nos.png") # <--- NOVA IMAGEM AQUI
 
-# Gerenciador de Estado
 if 'entrou_no_site' not in st.session_state:
     st.session_state['entrou_no_site'] = False
 
@@ -59,47 +56,74 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 # ==========================================
 # TELA 1: HOME
 # ==========================================
 if not st.session_state['entrou_no_site']:
     
-    # CSS Exclusivo da Home para o Botão Saiba Mais
-    st.markdown("""
+    st.markdown(f"""
     <style>
-        /* --- CORREÇÃO DO BOTÃO SAIBA MAIS --- */
-        .stButton > button {
-            background: linear-gradient(90deg, #A67C00 0%, #E2B922 50%, #A67C00 100%) !important;
-            color: black !important;
-            font-family: serif !important;
-            font-weight: 900 !important;
-            font-size: 24px !important;
+        /* --- 1. BOTÃO SAIBA MAIS (Primeiro bloco de colunas) --- */
+        div[data-testid="stHorizontalBlock"]:nth-of-type(1) button {{
+            background-image: url('{botao_saiba_mais_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-color: transparent !important;
             border: none !important;
-            border-radius: 0px !important; /* Tira borda redonda padrão */
             box-shadow: none !important;
-            clip-path: polygon(5% 0, 95% 0, 100% 50%, 95% 100%, 5% 100%, 0% 50%) !important;
-            height: 60px !important;
+            color: transparent !important; 
+            height: 70px !important; /* Ajuste fino da altura aqui */
+            width: 100% !important;
             transition: transform 0.3s !important;
-        }
-        .stButton > button:hover { transform: scale(1.05) !important; }
+            cursor: pointer !important;
+        }}
+        div[data-testid="stHorizontalBlock"]:nth-of-type(1) button:hover {{ transform: scale(1.05) !important; }}
+
+        /* --- 2. BOTÃO SOBRE NÓS (Segundo bloco de colunas - Fixo) --- */
+        /* Gruda o bloco inteiro no canto da tela */
+        div[data-testid="stHorizontalBlock"]:nth-of-type(2) {{
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            width: 180px !important; /* Controla a largura geral do botão lateral */
+            z-index: 999 !important;
+        }}
+        
+        div[data-testid="stHorizontalBlock"]:nth-of-type(2) button {{
+            background-image: url('{botao_sobre_nos_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center right !important;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: transparent !important; 
+            height: 45px !important; /* Altura do botão Sobre Nós */
+            width: 100% !important;
+            transition: transform 0.3s !important;
+            cursor: pointer !important;
+        }}
+        div[data-testid="stHorizontalBlock"]:nth-of-type(2) button:hover {{ transform: scale(1.05) !important; }}
     </style>
     """, unsafe_allow_html=True)
 
     st.write("\n" * 4) 
     st.markdown(f"""
         <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
-            <img src="{logo_b64}" style="max-width: 600px; height: auto;">
+            <img src="{logo_b64}" style="max-width: 700px; height: auto;">
         </div>
     """, unsafe_allow_html=True)
     
-    # Colunas para alinhar ao centro
-    col1, col_centro, col3 = st.columns([1, 1, 1])
+    # -----------------------------------------------------
+    # BLOCO 1: Saiba Mais (As proporções 2, 1, 2 resolvem o tamanho)
+    # -----------------------------------------------------
+    col1, col_centro, col3 = st.columns([2, 1, 2])
     with col_centro:
-        # AQUI ESTAVA O ERRO: Adicionado o use_container_width=True para esticar a fita
         if st.button("SAIBA MAIS", use_container_width=True):
             st.session_state['entrou_no_site'] = True
             st.rerun()
+
 
 # ==========================================
 # TELA 2: CATÁLOGO E PESQUISA
