@@ -3,18 +3,15 @@ import pandas as pd
 import plotly.graph_objects as go
 import base64
 
-# --- CONFIGURAÇÃO INICIAL ---
+# --- Configuração da aba no navegador ---
 st.set_page_config(page_title="Fake Wonka", page_icon="🍫", layout="wide", initial_sidebar_state="collapsed")
 
-# --- BASE DE DADOS SIMULADA ---
-dados_alimentos = pd.DataFrame({
-    "Alimento": ["Chocolate ao Leite", "Salsicha", "Suco de Caixinha", "Biscoito Recheado"],
-    "Resumo": ["Atenção: Possíveis traços de metais pesados.", "Atenção: Risco de Listeria no lote atual.", "Atenção: Alto índice de micotoxinas.", "Atenção: Excesso de corantes artificiais banidos."],
-    "Risco_Pct": [85, 92, 45, 78],
-    "Calorias": ["535 kcal", "300 kcal", "45 kcal", "480 kcal"],
-    "Carboidratos": ["59g", "2g", "11g", "68g"],
-    "Proteinas": ["7g", "12g", "0g", "5g"]
-})
+# --- Carregar o banco de dados ---
+@st.cache_data
+def carregar_dados():
+    return pd.read_excel("banco_alimentos.xlsx")
+
+dados_alimentos = carregar_dados()
 
 def carregar_imagem_base64(caminho):
     try:
@@ -22,18 +19,20 @@ def carregar_imagem_base64(caminho):
             encoded = base64.b64encode(image_file.read()).decode()
             return f"data:image/png;base64,{encoded}"
     except FileNotFoundError:
+        # Retorna um pixel transparente se a imagem do produto não for encontrada
         return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
 
-# --- CARREGAMENTO DAS IMAGENS ---
+# --- Carregamento das imagens ---
 logo_b64 = carregar_imagem_base64("logo_sem_fundo.png")
 botao_saiba_mais_b64 = carregar_imagem_base64("botao_saiba_mais.png")
 botao_sobre_nos_b64 = carregar_imagem_base64("botao_sobre_nos.png")
 foto_equipe_b64 = carregar_imagem_base64("foto_equipe.png")
 botao_home_b64 = carregar_imagem_base64("botao_home.png")
 botao_voltar_b64 = carregar_imagem_base64("botao_voltar.png")
-botao_pesquisa_b64 = carregar_imagem_base64("botao_pesquisa.png") 
+botao_pesquisa_b64 = carregar_imagem_base64("botao_pesquisa.png")
+botao_ver_produto_b64 = carregar_imagem_base64("botao_ver_produto.png") 
 
-# --- GERENCIADOR DE ESTADO ---
+# --- Gerenciamento de estado ---
 if 'pagina_atual' not in st.session_state:
     st.session_state['pagina_atual'] = 'home'
     
@@ -41,7 +40,7 @@ if 'alimento_selecionado' not in st.session_state:
     st.session_state['alimento_selecionado'] = None
 
 # ==========================================
-# CSS GLOBAL E BARRA DE PESQUISA (Blindada)
+# CSS GLOBAL E BARRA DE PESQUISA
 # ==========================================
 st.markdown(f"""
 <style>
@@ -75,7 +74,12 @@ if st.session_state['pagina_atual'] == 'home':
     <style>
         /* Primary = Saiba Mais */
         button[kind="primary"], button[kind="primary"]:hover, button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{
-            background: transparent url('{botao_saiba_mais_b64}') center / contain no-repeat !important; border: none !important; box-shadow: none !important;
+            background-color: transparent !important;
+            background-image: url('{botao_saiba_mais_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            border: none !important; box-shadow: none !important;
             height: 70px !important; width: 100% !important; transition: transform 0.3s !important; outline: none !important; opacity: 1 !important;
         }}
         button[kind="primary"] * {{ display: none !important; }}
@@ -83,7 +87,12 @@ if st.session_state['pagina_atual'] == 'home':
 
         /* Secondary = Sobre Nós */
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
-            background: transparent url('{botao_sobre_nos_b64}') right center / contain no-repeat !important; border: none !important; box-shadow: none !important;
+            background-color: transparent !important;
+            background-image: url('{botao_sobre_nos_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: right center !important;
+            border: none !important; box-shadow: none !important;
             height: 45px !important; width: 180px !important; position: fixed !important; bottom: 30px !important; right: 30px !important; z-index: 999 !important; transition: transform 0.3s !important; outline: none !important; opacity: 1 !important;
         }}
         button[kind="secondary"] * {{ display: none !important; }}
@@ -111,13 +120,16 @@ if st.session_state['pagina_atual'] == 'home':
 # ==========================================
 elif st.session_state['pagina_atual'] == 'sobre':
     
-    # CSS: O Secondary desta página é o Botão Home
     st.markdown(f"""
     <style>
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
-            background: transparent url('{botao_home_b64}') center / contain no-repeat !important;
+            background-color: transparent !important;
+            background-image: url('{botao_home_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
             border: none !important; box-shadow: none !important; height: 60px !important; width: 60px !important; border-radius: 50% !important; color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
-            display: block !important; margin-left: auto !important; /* Empurra para a direita */
+            display: block !important; margin-left: auto !important;
         }}
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
@@ -128,7 +140,6 @@ elif st.session_state['pagina_atual'] == 'sobre':
     with col_logo:
         st.markdown(f'<img src="{logo_b64}" style="max-height: 250px;">', unsafe_allow_html=True)
     with col_voltar:
-        # Repare no type="secondary"
         if st.button(" ", key="btn_sobre_home", type="secondary"):
             st.session_state['pagina_atual'] = 'home'
             st.rerun()
@@ -155,23 +166,35 @@ elif st.session_state['pagina_atual'] == 'sobre':
 # ==========================================
 elif st.session_state['pagina_atual'] == 'catalogo':
     
-    # CSS: Secondary = Botão Voltar (Seta), Primary = Botões do Catálogo
     st.markdown(f"""
     <style>
-        /* O Botão do Topo */
+        /* O Botão do Topo (Voltar) */
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
-            background: transparent url('{botao_home_b64}') center / contain no-repeat !important;
+            background-color: transparent !important;
+            background-image: url('{botao_voltar_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
             border: none !important; box-shadow: none !important; height: 60px !important; width: 60px !important; border-radius: 50% !important; color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
             display: block !important; margin-left: auto !important;
         }}
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
         
-        /* Os Botões dos Alimentos (Não escondemos o texto neste!) */
+        /* O Novo Botão de Ver Produto (Retangular) */
         button[kind="primary"], button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
-            background-color: #C69C26 !important; color: #21130d !important; font-weight: bold !important; border-radius: 15px !important; border: none !important; width: 100% !important; opacity: 1 !important; outline: none !important; 
+            background-color: transparent !important;
+            background-image: url('{botao_ver_produto_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            border: none !important; box-shadow: none !important; 
+            height: 50px !important; 
+            width: 100% !important; /* Estica para preencher a coluna inteira */
+            color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
+            display: block !important; margin: 0 auto !important;
         }}
-        button[kind="primary"]:hover {{ background-color: #E2C792 !important; color: black !important; }}
+        button[kind="primary"]:hover {{ transform: scale(1.05) !important; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -179,7 +202,6 @@ elif st.session_state['pagina_atual'] == 'catalogo':
     with col_logo:
         st.markdown(f'<img src="{logo_b64}" style="max-height: 250px;">', unsafe_allow_html=True)
     with col_voltar:
-        # Repare no type="secondary"
         if st.button(" ", key="btn_cat_voltar", type="secondary"):
             st.session_state['pagina_atual'] = 'home'
             st.rerun()
@@ -191,18 +213,22 @@ elif st.session_state['pagina_atual'] == 'catalogo':
     
     st.write("\n" * 2)
 
-    resultados = dados_alimentos[dados_alimentos["Alimento"].str.contains(busca, case=False)] if busca else dados_alimentos
+    # Filtro de maiusculas ou minusculas
+    resultados = dados_alimentos[dados_alimentos["Alimento"].str.contains(busca, case=False, na=False)] if busca else dados_alimentos
 
     if not resultados.empty:
         for index, row in resultados.iterrows():
+            # Converte a imagem do produto para exibir no card
+            foto_produto_b64 = carregar_imagem_base64(str(row['Caminho_Imagem']))
+            
             card_html = f"""
             <div style="display: flex; gap: 15px; margin-bottom: 5px; align-items: stretch; justify-content: center;">
-                <div style="background-color: #E2C792; border-radius: 15px; width: 25%; padding: 30px; text-align: center; color: #21130d; display: flex; align-items: center; justify-content: center; font-weight: bold; min-height: 120px;">
-                    Foto do<br>produto
+                <div style="background-color: #E2C792; border-radius: 15px; width: 25%; padding: 10px; text-align: center; color: #21130d; display: flex; align-items: center; justify-content: center; min-height: 120px;">
+                    <img src="{foto_produto_b64}" style="max-height: 100px; max-width: 100%; border-radius: 10px; object-fit: contain;">
                 </div>
                 <div style="background-color: #7B4E31; border-radius: 15px; width: 60%; padding: 20px; color: white; display: flex; flex-direction: column; justify-content: center;">
                     <h4 style="margin: 0; color: #E2C792;">{row['Alimento']}</h4>
-                    <p style="margin: 5px 0 0 0; font-size: 14px;">{row['Resumo']}</p>
+                    <p style="margin: 5px 0 0 0; font-size: 14px;">{row['Descricao']}</p>
                 </div>
             </div>
             """
@@ -210,8 +236,8 @@ elif st.session_state['pagina_atual'] == 'catalogo':
             
             col_esp, col_btn = st.columns([0.25, 0.6])
             with col_btn:
-                # Botão Primary ganha a formatação dourada que fizemos no CSS desta página
-                if st.button(f"🔍 Abrir Dossiê de Análise", key=f"btn_{index}", type="primary"):
+                
+                if st.button(" ", key=f"btn_{index}", type="primary", use_container_width=True):
                     st.session_state['alimento_selecionado'] = row
                     st.session_state['pagina_atual'] = 'descricao'
                     st.rerun()
@@ -225,7 +251,6 @@ elif st.session_state['pagina_atual'] == 'catalogo':
 # ==========================================
 elif st.session_state['pagina_atual'] == 'descricao':
     
-    # CSS: O Secondary desta página é o Botão de Pesquisa (Lupa)
     st.markdown(f"""
     <style>
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
@@ -244,7 +269,6 @@ elif st.session_state['pagina_atual'] == 'descricao':
     with col_logo:
         st.markdown(f'<img src="{logo_b64}" style="max-height: 250px;">', unsafe_allow_html=True)
     with col_voltar:
-        # Repare no type="secondary"
         if st.button(" ", key="btn_desc_pesquisa", type="secondary"):
             st.session_state['pagina_atual'] = 'catalogo'
             st.rerun()
@@ -252,7 +276,8 @@ elif st.session_state['pagina_atual'] == 'descricao':
     st.write("\n")
     st.markdown(f"<h2 style='text-align: center; color: #E2C792;'>Análise: {alimento['Alimento']}</h2>", unsafe_allow_html=True)
 
-    pct_risco = alimento['Risco_Pct']
+    # Grafico de Rosca
+    pct_risco = float(alimento['Nivel_Risco_Pct'])
     fig = go.Figure(go.Pie(
         values=[pct_risco, 100 - pct_risco],
         labels=["Índice de Risco", "Segurança"],
@@ -265,40 +290,60 @@ elif st.session_state['pagina_atual'] == 'descricao':
     fig.update_layout(
         showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(t=0, b=0, l=0, r=0), height=300,
-        annotations=[dict(text=f"{pct_risco}%", x=0.5, y=0.5, font_size=50, font_color="#E2C792", showarrow=False, font_family="serif")]
+        annotations=[dict(text=f"{int(pct_risco)}%", x=0.5, y=0.5, font_size=50, font_color="#E2C792", showarrow=False, font_family="serif")]
     )
     st.plotly_chart(fig, use_container_width=True)
 
     st.write("\n")
     col_info, col_nutri = st.columns([1, 1])
 
+    def valor_nutri(coluna):
+        val = alimento.get(coluna)
+        return val if pd.notna(val) else "Informação não disponível"
+
     with col_info:
-        st.markdown(f"""
-        <div style="background-color: #7B4E31; border-radius: 15px; padding: 30px; height: 100%; min-height: 280px; color: white;">
-            <h4 style="color: #E2C792; margin-top: 0;">Informações do Produto</h4>
-            <p style="font-size: 16px;">{alimento['Resumo']}</p>
-            <p><strong>Nível de Alerta:</strong> Crítico devido ao modelo de produção industrial padrão.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        
+        html_info = f"""<div style="background-color: #7B4E31; border-radius: 15px; padding: 30px; height: 100%; min-height: 380px; color: white;">
+<h4 style="color: #E2C792; margin-top: 0;">Informações do Produto</h4>
+<p style="font-size: 16px;">{valor_nutri('Descricao')}</p>
+<br>
+<h4 style="color: #C00000; margin-top: 0;">⚠️ Laudo de Alerta Industrial</h4>
+<p style="font-size: 15px; line-height: 1.4;">{valor_nutri('Alerta_Riscos')}</p>
+</div>"""
+        st.markdown(html_info, unsafe_allow_html=True)
 
     with col_nutri:
-        st.markdown(f"""
-        <div style="background-color: #E2C792; border-radius: 15px; padding: 25px; color: black; font-family: Arial, sans-serif; height: 100%; min-height: 280px;">
-            <h4 style="margin: 0; text-align: center; border-bottom: 2px solid black; padding-bottom: 5px;">INFORMAÇÃO NUTRICIONAL</h4>
-            <p style="margin: 5px 0; font-size: 14px;">Porção de 100g</p>
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px;">
-                <tr style="border-bottom: 1px solid #7B4E31;">
-                    <td style="padding: 5px 0;"><strong>Valor Energético</strong></td>
-                    <td style="text-align: right;">{alimento['Calorias']}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #7B4E31;">
-                    <td style="padding: 5px 0;"><strong>Carboidratos</strong></td>
-                    <td style="text-align: right;">{alimento['Carboidratos']}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #7B4E31;">
-                    <td style="padding: 5px 0;"><strong>Proteínas</strong></td>
-                    <td style="text-align: right;">{alimento['Proteinas']}</td>
-                </tr>
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
+        mapa_nutrientes = [
+            ('Valor_Energético', 'Valor Energético', True, 0),
+            ('Carboidratos', 'Carboidratos', True, 0),
+            ('Açúcares_Totais', 'Açúcares Totais', False, 15),
+            ('Açúcares_Adicionados', 'Açúcares Adicionados', False, 15),
+            ('Proteínas', 'Proteínas', True, 0),
+            ('Gorduras_Totais', 'Gorduras Totais', True, 0),
+            ('Gorduras Saturadas', 'Gorduras Saturadas', False, 15),
+            ('Gorduras_Trans', 'Gorduras Trans', False, 15),
+            ('Fibra Alimentar', 'Fibra Alimentar', True, 0),
+            ('Sódio', 'Sódio', True, 0),
+            ('Cálcio', 'Cálcio', False, 0),
+            ('Ferro', 'Ferro', False, 0),
+            ('Vitamina A', 'Vitamina A', False, 0),
+            ('Vitamina C', 'Vitamina C', False, 0),
+            ('Ácido Fólico', 'Ácido Fólico', False, 0)
+        ]
+
+        linhas_html = ""
+        for col_excel, nome_exibicao, is_bold, recuo in mapa_nutrientes:
+            if col_excel in alimento and pd.notna(alimento[col_excel]):
+                valor = str(alimento[col_excel]).strip()
+                peso_fonte = "bold" if is_bold else "normal"
+                cor_fonte = "#21130d" if is_bold else "#4A2F24"
+                
+                # Geração da linha da tabela nutricional
+                linhas_html += f'<tr style="border-bottom: 1px solid #7B4E31;"><td style="padding: 4px 0 4px {recuo}px; font-weight: {peso_fonte}; color: {cor_fonte};">{nome_exibicao}</td><td style="text-align: right;">{valor}</td></tr>'
+
+        porcao_texto = alimento.get('Porcao') if pd.notna(alimento.get('Porcao')) else "Porção não informada"
+
+        # Tabela completa montada em bloco linear
+        html_tabela = f'<div style="background-color: #E2C792; border-radius: 15px; padding: 25px; color: black; font-family: Arial, sans-serif; height: 100%; min-height: 380px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);"><h4 style="margin: 0; text-align: center; border-bottom: 2px solid black; padding-bottom: 5px;">INFORMAÇÃO NUTRICIONAL</h4><p style="margin: 5px 0; font-size: 14px; text-align: center; font-weight: bold;">{porcao_texto}</p><table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;">{linhas_html}</table></div>'
+        
+        st.markdown(html_tabela, unsafe_allow_html=True)
