@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Extração estruturada baseada no seu PDF
+# Extração de dados do PDF de informacoes dos alimentos informacoes_nutricionais.pdf, para a criaçao do df
 dados_iniciais = [
     # ------------------------------
     # Embutidos e Carnes Processadas
