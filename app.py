@@ -107,12 +107,100 @@ if st.session_state['pagina_atual'] == 'home':
     col1, col_centro, col3 = st.columns([2, 1, 2])
     with col_centro:
         if st.button(" ", type="primary", use_container_width=True):
-            st.session_state['pagina_atual'] = 'catalogo'
+            # AGORA ELE VAI PARA A PÁGINA INTERMEDIÁRIA
+            st.session_state['pagina_atual'] = 'manifesto' 
             st.rerun()
+
 
     if st.button(" ", type="secondary"):
         st.session_state['pagina_atual'] = 'sobre'
         st.rerun()
+
+# ==========================================
+# TELA INTERMEDIÁRIA: ADMINISTRAÇÃO E INDÚSTRIA
+# ==========================================
+elif st.session_state['pagina_atual'] == 'manifesto':
+    
+    st.markdown(f"""
+    <style>
+        /* Botão Secundário para o botão de Voltar (Seta) */
+        button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
+            background: transparent url('{botao_voltar_b64}') center / contain no-repeat !important;
+            border: none !important; box-shadow: none !important; height: 60px !important; width: 60px !important; border-radius: 50% !important; color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
+            display: block !important; margin-left: auto !important;
+        }}
+        button[kind="secondary"] * {{ display: none !important; }}
+        button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
+        
+        /* Botão Primário para avançar ao Catálogo */
+        button[kind="primary"], button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
+            background-color: #C69C26 !important; color: #21130d !important; font-weight: bold !important; font-size: 18px !important; border-radius: 15px !important; border: none !important; width: 100% !important; height: 60px !important; opacity: 1 !important; outline: none !important; 
+        }}
+        button[kind="primary"]:hover {{ background-color: #E2C792 !important; color: black !important; transform: scale(1.02) !important; transition: transform 0.2s !important;}}
+    </style>
+    """, unsafe_allow_html=True)
+
+
+    col_vazia1, col_logo, col_voltar = st.columns([1, 6, 1])
+    with col_logo:
+        # A logo menor centralizada
+        st.markdown(f'<div style="text-align: center;"><img src="{logo_b64}" style="max-height: 120px;"></div>', unsafe_allow_html=True)
+    with col_voltar:
+        if st.button(" ", key="btn_manifesto_voltar", type="secondary"):
+            st.session_state['pagina_atual'] = 'home'
+            st.rerun()
+
+    st.write("\n")
+
+
+    texto_admin = f"""
+    <div style="background-color: #E2C792; border-radius: 15px; padding: 40px; color: #21130d; height: 450px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); text-align: justify; font-family: Arial, sans-serif; line-height: 1.6; margin-bottom: 30px;">
+        
+        <h2 style="text-align: center; border-bottom: 2px solid #7B4E31; padding-bottom: 10px; margin-top: 0;">A Ilusão Industrial e a Gestão</h2>
+        
+        <p><strong>A Cultura Organizacional do Lucro:</strong> Em um ambiente empresarial onde as margens de lucro ditam as regras, a indústria alimentícia adotou conceitos da Teoria Clássica e do Fordismo para otimizar suas linhas de produção. O resultado? A substituição de comida real por fórmulas químicas ultraprocessadas, focadas em baratear o custo e estender a vida útil nas prateleiras.</p>
+        
+        <p><strong>Marketing e Análise Comportamental:</strong> Utilizando princípios da Abordagem Comportamental, as empresas desenham embalagens e campanhas publicitárias que criam gatilhos psicológicos no consumidor. Eles mascaram produtos nocivos à saúde sob a roupagem de "produtos enriquecidos com vitaminas" ou "opções práticas para o dia a dia", manipulando a percepção de valor.</p>
+        
+        <p><strong>Teoria Contingencial e o Ambiente Externo:</strong> Como essas indústrias sobrevivem às novas leis da Anvisa sobre rotulagem? Através da adaptação contingencial. Elas alteram superficialmente suas fórmulas apenas o suficiente para evitar os selos pretos de alerta de alto teor de sódio ou açúcares, sem mudar a essência ultraprocessada do produto.</p>
+        
+        <p>O nosso catálogo a seguir é uma ferramenta de auditoria. Vamos expor, produto por produto, o que os relatórios e táticas de gestão dessas empresas não querem que você veja.</p>
+        
+        <br><br><p style="opacity: 0.5; text-align: center;">[Role para baixo para continuar lendo...]</p><br><br>
+        <p>Ao analisar a administração moderna, percebemos que a ética e a responsabilidade social corporativa (RSC) muitas vezes ficam em segundo plano. A gestão estratégica dessas marcas prioriza o acionista em detrimento do consumidor. Este projeto visa aplicar o senso crítico da administração para desmontar essa cadeia de manipulação alimentar.</p>
+
+    </div>
+    
+    <style>
+        /* Estilizando a barra de rolagem nativa para combinar com o site */
+        div[style*="overflow-y: auto"]::-webkit-scrollbar {{
+            width: 10px;
+        }}
+        div[style*="overflow-y: auto"]::-webkit-scrollbar-track {{
+            background: #d1b57c; 
+            border-radius: 10px;
+        }}
+        div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {{
+            background: #7B4E31; 
+            border-radius: 10px;
+        }}
+        div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {{
+            background: #5c4033; 
+        }}
+    </style>
+    """
+    
+    col_espaco_esq, col_caixa, col_espaco_dir = st.columns([1, 4, 1])
+    with col_caixa:
+        # Renderiza a caixa com scroll numa linha só de HTML
+        st.markdown(texto_admin.replace('\n', ''), unsafe_allow_html=True)
+        
+        # Botão para ir para o catálogo final
+        if st.button("Acessar o Catálogo de Produtos ➡️", type="primary", use_container_width=True):
+            st.session_state['pagina_atual'] = 'catalogo'
+            st.rerun()
+
+
 
 
 # ==========================================
