@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import base64
+import textwrap
 
 # --- Configuração da aba no navegador ---
 st.set_page_config(page_title="Fake Wonka", page_icon="🍫", layout="wide", initial_sidebar_state="collapsed")
@@ -19,7 +20,6 @@ def carregar_imagem_base64(caminho):
             encoded = base64.b64encode(image_file.read()).decode()
             return f"data:image/png;base64,{encoded}"
     except FileNotFoundError:
-        # Retorna um pixel transparente se a imagem do produto não for encontrada
         return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
 
 # --- Carregamento das imagens ---
@@ -31,6 +31,7 @@ botao_home_b64 = carregar_imagem_base64("botao_home.png")
 botao_voltar_b64 = carregar_imagem_base64("botao_voltar.png")
 botao_pesquisa_b64 = carregar_imagem_base64("botao_pesquisa.png")
 botao_ver_produto_b64 = carregar_imagem_base64("botao_ver_produto.png") 
+botao_acessar_catalogo_b64 = carregar_imagem_base64("botao_acessar_catalogo.png")
 
 # --- Gerenciamento de estado ---
 if 'pagina_atual' not in st.session_state:
@@ -38,6 +39,10 @@ if 'pagina_atual' not in st.session_state:
     
 if 'alimento_selecionado' not in st.session_state:
     st.session_state['alimento_selecionado'] = None
+
+# NOVO ESTADO: Memória para a tela Sobre Nós
+if 'aba_sobre' not in st.session_state:
+    st.session_state['aba_sobre'] = 'missao'
 
 # ==========================================
 # CSS GLOBAL E BARRA DE PESQUISA
@@ -62,6 +67,12 @@ st.markdown(f"""
         background-size: 25px !important; 
     }}
     .stTextInput input::placeholder {{ color: #5c4033 !important; }}
+    
+    /* Scrollbar customizada global para caixas de texto */
+    div[style*="overflow-y: auto"]::-webkit-scrollbar {{ width: 10px; }}
+    div[style*="overflow-y: auto"]::-webkit-scrollbar-track {{ background: #d1b57c; border-radius: 10px; }}
+    div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {{ background: #7B4E31; border-radius: 10px; }}
+    div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {{ background: #5c4033; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -72,7 +83,6 @@ st.markdown(f"""
 if st.session_state['pagina_atual'] == 'home':
     st.markdown(f"""
     <style>
-        /* Primary = Saiba Mais */
         button[kind="primary"], button[kind="primary"]:hover, button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{
             background-color: transparent !important;
             background-image: url('{botao_saiba_mais_b64}') !important;
@@ -85,7 +95,6 @@ if st.session_state['pagina_atual'] == 'home':
         button[kind="primary"] * {{ display: none !important; }}
         button[kind="primary"]:hover {{ transform: scale(1.05) !important; }}
 
-        /* Secondary = Sobre Nós */
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
             background-color: transparent !important;
             background-image: url('{botao_sobre_nos_b64}') !important;
@@ -107,23 +116,20 @@ if st.session_state['pagina_atual'] == 'home':
     col1, col_centro, col3 = st.columns([2, 1, 2])
     with col_centro:
         if st.button(" ", type="primary", use_container_width=True):
-            # AGORA ELE VAI PARA A PÁGINA INTERMEDIÁRIA
             st.session_state['pagina_atual'] = 'manifesto' 
             st.rerun()
-
 
     if st.button(" ", type="secondary"):
         st.session_state['pagina_atual'] = 'sobre'
         st.rerun()
 
 # ==========================================
-# TELA INTERMEDIÁRIA: ADMINISTRAÇÃO E INDÚSTRIA
+# TELA INTERMEDIÁRIA: CONEXÃO COM INT ADM
 # ==========================================
 elif st.session_state['pagina_atual'] == 'manifesto':
     
     st.markdown(f"""
     <style>
-        /* Botão Secundário para o botão de Voltar (Seta) */
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
             background: transparent url('{botao_voltar_b64}') center / contain no-repeat !important;
             border: none !important; box-shadow: none !important; height: 60px !important; width: 60px !important; border-radius: 50% !important; color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
@@ -132,18 +138,25 @@ elif st.session_state['pagina_atual'] == 'manifesto':
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
         
-        /* Botão Primário para avançar ao Catálogo */
-        button[kind="primary"], button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
-            background-color: #C69C26 !important; color: #21130d !important; font-weight: bold !important; font-size: 18px !important; border-radius: 15px !important; border: none !important; width: 100% !important; height: 60px !important; opacity: 1 !important; outline: none !important; 
+        button[kind="primary"], button[kind="primary"]:hover, button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
+            background-color: transparent !important;
+            background-image: url('{botao_acessar_catalogo_b64}') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            border: none !important; box-shadow: none !important; 
+            width: 100% !important; height: 70px !important; opacity: 1 !important; outline: none !important; 
+            display: block !important; margin: 0 auto !important; color: transparent !important;
         }}
-        button[kind="primary"]:hover {{ background-color: #E2C792 !important; color: black !important; transform: scale(1.02) !important; transition: transform 0.2s !important;}}
+        button[kind="primary"] * {{ display: none !important; }}
+        button[kind="primary"]::before, button[kind="primary"]::after {{ display: none !important; background: transparent !important; }}
+        button[kind="primary"]:hover {{ transform: scale(1.02) !important; }}
     </style>
     """, unsafe_allow_html=True)
 
 
     col_vazia1, col_logo, col_voltar = st.columns([1, 6, 1])
     with col_logo:
-        # A logo menor centralizada
         st.markdown(f'<div style="text-align: center;"><img src="{logo_b64}" style="max-height: 120px;"></div>', unsafe_allow_html=True)
     with col_voltar:
         if st.button(" ", key="btn_manifesto_voltar", type="secondary"):
@@ -152,9 +165,8 @@ elif st.session_state['pagina_atual'] == 'manifesto':
 
     st.write("\n")
 
-
     texto_admin = f"""
-    <div style="background-color: #E2C792; border-radius: 15px; padding: 40px; color: #21130d; height: 450px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); text-align: justify; font-family: Arial, sans-serif; line-height: 1.6; margin-bottom: 30px;">
+    <div style="background-color: #E2C792; border-radius: 15px; padding: 40px; color: #21130d; height: 400px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); text-align: justify; font-family: Arial, sans-serif; line-height: 1.6; margin-bottom: 30px;">
         
         <h2 style="text-align: center; border-bottom: 2px solid #7B4E31; padding-bottom: 10px; margin-top: 0;">A Ilusão Industrial e a Gestão</h2>
         
@@ -165,46 +177,21 @@ elif st.session_state['pagina_atual'] == 'manifesto':
         <p><strong>Teoria Contingencial e o Ambiente Externo:</strong> Como essas indústrias sobrevivem às novas leis da Anvisa sobre rotulagem? Através da adaptação contingencial. Elas alteram superficialmente suas fórmulas apenas o suficiente para evitar os selos pretos de alerta de alto teor de sódio ou açúcares, sem mudar a essência ultraprocessada do produto.</p>
         
         <p>O nosso catálogo a seguir é uma ferramenta de auditoria. Vamos expor, produto por produto, o que os relatórios e táticas de gestão dessas empresas não querem que você veja.</p>
-        
-        <br><br><p style="opacity: 0.5; text-align: center;">[Role para baixo para continuar lendo...]</p><br><br>
-        <p>Ao analisar a administração moderna, percebemos que a ética e a responsabilidade social corporativa (RSC) muitas vezes ficam em segundo plano. A gestão estratégica dessas marcas prioriza o acionista em detrimento do consumidor. Este projeto visa aplicar o senso crítico da administração para desmontar essa cadeia de manipulação alimentar.</p>
 
     </div>
-    
-    <style>
-        /* Estilizando a barra de rolagem nativa para combinar com o site */
-        div[style*="overflow-y: auto"]::-webkit-scrollbar {{
-            width: 10px;
-        }}
-        div[style*="overflow-y: auto"]::-webkit-scrollbar-track {{
-            background: #d1b57c; 
-            border-radius: 10px;
-        }}
-        div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {{
-            background: #7B4E31; 
-            border-radius: 10px;
-        }}
-        div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {{
-            background: #5c4033; 
-        }}
-    </style>
     """
     
-    col_espaco_esq, col_caixa, col_espaco_dir = st.columns([1, 4, 1])
+    col_espaco_esq, col_caixa, col_espaco_dir = st.columns([1, 3, 1])
     with col_caixa:
-        # Renderiza a caixa com scroll numa linha só de HTML
         st.markdown(texto_admin.replace('\n', ''), unsafe_allow_html=True)
         
-        # Botão para ir para o catálogo final
-        if st.button("Acessar o Catálogo de Produtos ➡️", type="primary", use_container_width=True):
+        if st.button(" ", key="btn_acessar_catalogo", type="primary", use_container_width=True):
             st.session_state['pagina_atual'] = 'catalogo'
             st.rerun()
 
 
-
-
 # ==========================================
-# TELA 2: SOBRE NÓS
+# TELA 2: SOBRE NÓS 
 # ==========================================
 elif st.session_state['pagina_atual'] == 'sobre':
     
@@ -221,6 +208,27 @@ elif st.session_state['pagina_atual'] == 'sobre':
         }}
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
+        
+        /* CSS dos Botões Laterais Beges (Agora maiores e mais elegantes) */
+        button[kind="tertiary"], button[kind="tertiary"]:hover, button[kind="tertiary"]:active, button[kind="tertiary"]:focus {{
+            background-color: #E2C792 !important;
+            color: #21130d !important;
+            border-radius: 15px !important;
+            border: 2px solid transparent !important;
+            height: 100px !important; /* Aumentei um pouco a altura */
+            width: 100% !important;
+            font-family: 'Georgia', serif !important; /* Fonte mais clássica e elegante */
+            font-weight: bold !important;
+            font-size: 22px !important; /* Fonte maior */
+            white-space: normal !important;
+            transition: transform 0.2s !important;
+            margin-bottom: 20px !important;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.15) !important; /* Sombra sutil para dar profundidade */
+        }}
+        button[kind="tertiary"]:hover {{
+            transform: scale(1.03) !important;
+            border: 2px solid #7B4E31 !important;
+        }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -233,20 +241,80 @@ elif st.session_state['pagina_atual'] == 'sobre':
             st.rerun()
 
     st.write("\n" * 2)
-    col_esq, col_meio, col_dir = st.columns([1, 1.5, 1])
 
+    textos_sobre = {
+        'missao': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Missão</h2>
+        <p style="font-size: 18px;">Desenvolver as tarefas e o projeto final de equipe de forma estruturada, aplicando conhecimentos analíticos e técnicos, destacando-se pela organização e praticidade na resolução de problemas, para atender às exigências da professora e gerar aprendizado prático de IADM.</p>
+        """,
+        
+        'visao': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Visão</h2>
+        <p style="font-size: 18px;">Ser reconhecida pelo corpo docente e pelos pares como uma equipe de excelência técnica e gestão eficiente, alcançando a nota máxima no Projeto Final e gerando um portfólio prático até o fim do semestre.</p>
+        """,
+        
+        'valores': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossos Valores</h2>
+        <ul style="font-size: 18px; line-height: 1.8;">
+            <li><strong>Pragmatismo:</strong> Foco na resolução de problemas e trabalho de qualidade.</li>
+            <li><strong>Comprometimento com prazos:</strong> Respeito com os marcos do projeto.</li>
+            <li><strong>Comunicação direta e transparente:</strong> Feedbacks técnicos, baseados em dados e fatos</li>
+            <li><strong>Qualidade técnica:</strong> Decisões baseadas em praticidade e fundamentos teóricos.</li>
+        </ul>
+        """,
+        
+        'grupo': f"""
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">O Grupo</h2>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <img src="{foto_equipe_b64}" style="max-height: 160px; border-radius: 10px;">
+        </div>
+        <p style="text-align: center;">Somos estudantes engajados em aplicar teorias da administração para auditar as táticas da indústria de alimentos.</p>
+        """,
+        
+        'professor': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">O Professor</h2>
+        <p style="font-size: 18px;">Agradecemos ao nosso orientador da disciplina de Introdução à Administração por incentivar o senso crítico na análise de modelos organizacionais reais.</p>
+        """
+    }
+
+    
+    col_vazia_esq, col_esq, col_meio, col_dir, col_vazia_dir = st.columns([0.5, 1.2, 2.2, 1.2, 0.5])
+    
     with col_esq:
-        st.markdown("""<div style="background-color: #E2C792; border-radius: 15px; padding: 25px; text-align: center; color: #21130d; font-weight: bold; font-size: 24px; margin-bottom: 15px;">Missão</div>
-        <div style="background-color: #7B4E31; border-radius: 15px; padding: 25px; text-align: center; color: white; font-weight: bold; font-size: 24px; margin-bottom: 15px;">Visão</div>
-        <div style="background-color: #E2C792; border-radius: 15px; padding: 25px; text-align: center; color: #21130d; font-weight: bold; font-size: 24px;">Valores</div>""", unsafe_allow_html=True)
+        if st.button("Missão", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'missao'
+            st.rerun()
+            
+        if st.button("Visão", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'visao'
+            st.rerun()
+
+        if st.button("Valores", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'valores'
+            st.rerun()
 
     with col_meio:
-        st.markdown(f"""<div style="background-color: #7B4E31; border-radius: 15px; padding: 20px; text-align: center; height: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center;">
-            <img src="{foto_equipe_b64}" style="max-width: 90%; border-radius: 10px;" alt="Foto do Grupo"></div>""", unsafe_allow_html=True)
+        texto_selecionado = textos_sobre[st.session_state['aba_sobre']]
+        
+        
+        html_caixa = f"""
+        <div style="background-color: #7B4E31; border-radius: 15px; padding: 40px; color: white; height: 340px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); font-family: Arial, sans-serif; line-height: 1.6;">
+            {texto_selecionado}
+        </div>
+        """
+        st.markdown(textwrap.dedent(html_caixa), unsafe_allow_html=True)
 
     with col_dir:
-        st.markdown("""<div style="background-color: #E2C792; border-radius: 15px; padding: 30px; text-align: center; color: #21130d; font-weight: bold; height: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-            Descrição sobre<br>o grupo</div>""", unsafe_allow_html=True)
+        
+        st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("O Grupo", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'grupo'
+            st.rerun()
+            
+        if st.button("O Professor", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'professor'
+            st.rerun()
 
 
 # ==========================================
@@ -269,8 +337,8 @@ elif st.session_state['pagina_atual'] == 'catalogo':
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
         
-        /* O Novo Botão de Ver Produto (Retangular) */
-        button[kind="primary"], button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
+        /* O Novo Botão de Ver Produto (Retangular e Blindado) */
+        button[kind="primary"], button[kind="primary"]:hover, button[kind="primary"]:active, button[kind="primary"]:focus, button[kind="primary"]:disabled {{ 
             background-color: transparent !important;
             background-image: url('{botao_ver_produto_b64}') !important;
             background-size: contain !important;
@@ -278,11 +346,13 @@ elif st.session_state['pagina_atual'] == 'catalogo':
             background-position: center !important;
             border: none !important; box-shadow: none !important; 
             height: 50px !important; 
-            width: 100% !important; /* Estica para preencher a coluna inteira */
+            width: 100% !important; 
             color: transparent !important; transition: transform 0.2s !important; opacity: 1 !important; outline: none !important; 
             display: block !important; margin: 0 auto !important;
         }}
-        button[kind="primary"]:hover {{ transform: scale(1.05) !important; }}
+        button[kind="primary"] * {{ display: none !important; color: transparent !important; background: transparent !important; }}
+        button[kind="primary"]::before, button[kind="primary"]::after {{ display: none !important; background: transparent !important; }}
+        button[kind="primary"]:hover {{ transform: scale(1.02) !important; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -295,41 +365,47 @@ elif st.session_state['pagina_atual'] == 'catalogo':
             st.rerun()
 
     st.write("\n")
-    col_espaco1, col_busca, col_espaco2 = st.columns([1, 2, 1])
+    
+    
+    col_pesq_esq, col_busca, col_pesq_dir = st.columns([1, 2.5, 1])
     with col_busca:
         busca = st.text_input("Buscar", placeholder="Pesquise aqui...", label_visibility="collapsed")
     
     st.write("\n" * 2)
 
-    # Filtro de maiusculas ou minusculas
     resultados = dados_alimentos[dados_alimentos["Alimento"].str.contains(busca, case=False, na=False)] if busca else dados_alimentos
 
     if not resultados.empty:
         for index, row in resultados.iterrows():
-            # Converte a imagem do produto para exibir no card
             foto_produto_b64 = carregar_imagem_base64(str(row['Caminho_Imagem']))
             
-            card_html = f"""
-            <div style="display: flex; gap: 15px; margin-bottom: 5px; align-items: stretch; justify-content: center;">
-                <div style="background-color: #E2C792; border-radius: 15px; width: 25%; padding: 10px; text-align: center; color: #21130d; display: flex; align-items: center; justify-content: center; min-height: 120px;">
-                    <img src="{foto_produto_b64}" style="max-height: 100px; max-width: 100%; border-radius: 10px; object-fit: contain;">
-                </div>
-                <div style="background-color: #7B4E31; border-radius: 15px; width: 60%; padding: 20px; color: white; display: flex; flex-direction: column; justify-content: center;">
-                    <h4 style="margin: 0; color: #E2C792;">{row['Alimento']}</h4>
-                    <p style="margin: 5px 0 0 0; font-size: 14px;">{row['Descricao']}</p>
-                </div>
-            </div>
-            """
-            st.markdown(card_html, unsafe_allow_html=True)
             
-            col_esp, col_btn = st.columns([0.25, 0.6])
-            with col_btn:
+            col_vazia_esq, col_img, col_info, col_vazia_dir = st.columns([1, 1, 2.5, 1])
+            
+            with col_img:
+                st.markdown(f"""
+                <div style="background-color: #E2C792; border-radius: 15px; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; padding: 10px; margin: 0 auto;">
+                    <img src="{foto_produto_b64}" style="max-height: 140px; max-width: 100%; border-radius: 10px; object-fit: contain;">
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with col_info:
+                st.markdown(f"""
+                <div style="background-color: #7B4E31; border-radius: 15px; padding: 15px 20px; color: white; min-height: 95px; height: auto; margin-bottom: 15px; display: flex; flex-direction: column; justify-content: center;">
+                    <h4 style="margin: 0; color: #E2C792;">{row['Alimento']}</h4>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; line-height: 1.4;">{row['Descricao']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
                 
                 if st.button(" ", key=f"btn_{index}", type="primary", use_container_width=True):
                     st.session_state['alimento_selecionado'] = row
                     st.session_state['pagina_atual'] = 'descricao'
                     st.rerun()
-            st.write("---") 
+            
+            
+            st.markdown("<hr style='margin: 20px auto; width: 70%; border-color: #7B4E31; opacity: 0.25;'>", unsafe_allow_html=True)
+            
     else:
         st.markdown("<p style='text-align: center; color: #E2C792;'>Nenhum alimento encontrado.</p>", unsafe_allow_html=True)
 
@@ -364,8 +440,12 @@ elif st.session_state['pagina_atual'] == 'descricao':
     st.write("\n")
     st.markdown(f"<h2 style='text-align: center; color: #E2C792;'>Análise: {alimento['Alimento']}</h2>", unsafe_allow_html=True)
 
-    # Grafico de Rosca
-    pct_risco = float(alimento['Nivel_Risco_Pct'])
+    pct_risco = float(alimento.get('Nivel_Risco_Pct', 0))
+    if pct_risco <= 1 and pct_risco > 0: 
+        pct_risco = pct_risco * 100
+    
+    foto_produto_b64 = carregar_imagem_base64(str(alimento['Caminho_Imagem']))
+        
     fig = go.Figure(go.Pie(
         values=[pct_risco, 100 - pct_risco],
         labels=["Índice de Risco", "Segurança"],
@@ -377,10 +457,27 @@ elif st.session_state['pagina_atual'] == 'descricao':
     
     fig.update_layout(
         showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=0, b=0, l=0, r=0), height=300,
-        annotations=[dict(text=f"{int(pct_risco)}%", x=0.5, y=0.5, font_size=50, font_color="#E2C792", showarrow=False, font_family="serif")]
+        margin=dict(t=10, b=10, l=10, r=10), height=300
     )
+    
+    fig.add_layout_image(
+        dict(
+            source=foto_produto_b64,
+            xref="paper", yref="paper",
+            x=0.5, y=0.5,
+            sizex=0.6, sizey=0.6, 
+            xanchor="center", yanchor="middle"
+        )
+    )
+    
     st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown(f"""
+        <div style='text-align: center; margin-top: -30px; margin-bottom: 30px;'>
+            <span style='color: white; font-size: 20px; font-weight: bold;'>Índice de Risco: </span>
+            <span style='color: #E2C792; font-size: 30px; font-weight: bold;'>{int(pct_risco)}%</span>
+        </div>
+    """, unsafe_allow_html=True)
 
     st.write("\n")
     col_info, col_nutri = st.columns([1, 1])
@@ -390,6 +487,8 @@ elif st.session_state['pagina_atual'] == 'descricao':
         return val if pd.notna(val) else "Informação não disponível"
 
     with col_info:
+        zona_risco = valor_nutri('Zona_de_Risco')
+        justificativa = valor_nutri('Justificativa_Risco')
         
         html_info = f"""<div style="background-color: #7B4E31; border-radius: 15px; padding: 30px; height: 100%; min-height: 380px; color: white;">
 <h4 style="color: #E2C792; margin-top: 0;">Informações do Produto</h4>
@@ -397,8 +496,11 @@ elif st.session_state['pagina_atual'] == 'descricao':
 <br>
 <h4 style="color: #C00000; margin-top: 0;">⚠️ Laudo de Alerta Industrial</h4>
 <p style="font-size: 15px; line-height: 1.4;">{valor_nutri('Alerta_Riscos')}</p>
+<br>
+<h4 style="color: #E2C792; margin-top: 0;">🧮 Cálculo do Índice</h4>
+<p style="font-size: 15px; line-height: 1.4;"><strong>{zona_risco}</strong><br>{justificativa}</p>
 </div>"""
-        st.markdown(html_info, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(html_info), unsafe_allow_html=True)
 
     with col_nutri:
         mapa_nutrientes = [
@@ -426,12 +528,10 @@ elif st.session_state['pagina_atual'] == 'descricao':
                 peso_fonte = "bold" if is_bold else "normal"
                 cor_fonte = "#21130d" if is_bold else "#4A2F24"
                 
-                # Geração da linha da tabela nutricional
                 linhas_html += f'<tr style="border-bottom: 1px solid #7B4E31;"><td style="padding: 4px 0 4px {recuo}px; font-weight: {peso_fonte}; color: {cor_fonte};">{nome_exibicao}</td><td style="text-align: right;">{valor}</td></tr>'
 
         porcao_texto = alimento.get('Porcao') if pd.notna(alimento.get('Porcao')) else "Porção não informada"
 
-        # Tabela completa montada em bloco linear
         html_tabela = f'<div style="background-color: #E2C792; border-radius: 15px; padding: 25px; color: black; font-family: Arial, sans-serif; height: 100%; min-height: 380px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);"><h4 style="margin: 0; text-align: center; border-bottom: 2px solid black; padding-bottom: 5px;">INFORMAÇÃO NUTRICIONAL</h4><p style="margin: 5px 0; font-size: 14px; text-align: center; font-weight: bold;">{porcao_texto}</p><table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;">{linhas_html}</table></div>'
         
-        st.markdown(html_tabela, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(html_tabela), unsafe_allow_html=True)
