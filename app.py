@@ -116,7 +116,7 @@ if st.session_state['pagina_atual'] == 'home':
     col1, col_centro, col3 = st.columns([2, 1, 2])
     with col_centro:
         if st.button(" ", type="primary", use_container_width=True):
-            st.session_state['pagina_atual'] = 'manifesto' 
+            st.session_state['pagina_atual'] = 'desclaimer' 
             st.rerun()
 
     if st.button(" ", type="secondary"):
@@ -124,9 +124,9 @@ if st.session_state['pagina_atual'] == 'home':
         st.rerun()
 
 # ==========================================
-# TELA INTERMEDIÁRIA: CONEXÃO COM INT ADM
+# TELA DESCLAIMER: CONEXÃO COM INT ADM
 # ==========================================
-elif st.session_state['pagina_atual'] == 'manifesto':
+elif st.session_state['pagina_atual'] == 'desclaimer':
     
     st.markdown(f"""
     <style>
@@ -165,21 +165,50 @@ elif st.session_state['pagina_atual'] == 'manifesto':
 
     st.write("\n")
 
+    # texto do Desclaimer
     texto_admin = f"""
     <div style="background-color: #E2C792; border-radius: 15px; padding: 40px; color: #21130d; height: 400px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); text-align: justify; font-family: Arial, sans-serif; line-height: 1.6; margin-bottom: 30px;">
         
-        <h2 style="text-align: center; border-bottom: 2px solid #7B4E31; padding-bottom: 10px; margin-top: 0;">A Ilusão Industrial e a Gestão</h2>
+        <h2 style="text-align: center; border-bottom: 2px solid #7B4E31; padding-bottom: 10px; margin-top: 0;">O que é esse projeto</h2>
         
+        <p> O nosso projeto deu-se inicio quando notamos que as empresas começaram a dotar certos meios de burlar o sistema alimentar utilizando metodos administrativos como:</p>
+
         <p><strong>A Cultura Organizacional do Lucro:</strong> Em um ambiente empresarial onde as margens de lucro ditam as regras, a indústria alimentícia adotou conceitos da Teoria Clássica e do Fordismo para otimizar suas linhas de produção. O resultado? A substituição de comida real por fórmulas químicas ultraprocessadas, focadas em baratear o custo e estender a vida útil nas prateleiras.</p>
         
         <p><strong>Marketing e Análise Comportamental:</strong> Utilizando princípios da Abordagem Comportamental, as empresas desenham embalagens e campanhas publicitárias que criam gatilhos psicológicos no consumidor. Eles mascaram produtos nocivos à saúde sob a roupagem de "produtos enriquecidos com vitaminas" ou "opções práticas para o dia a dia", manipulando a percepção de valor.</p>
         
-        <p><strong>Teoria Contingencial e o Ambiente Externo:</strong> Como essas indústrias sobrevivem às novas leis da Anvisa sobre rotulagem? Através da adaptação contingencial. Elas alteram superficialmente suas fórmulas apenas o suficiente para evitar os selos pretos de alerta de alto teor de sódio ou açúcares, sem mudar a essência ultraprocessada do produto.</p>
+        <p><strong>Teoria Contingencial e o Ambiente Externo:</strong> Como essas indústrias sobrevivem às novas leis da Anvisa sobre rotulagem? Através da adaptação contingencial. Elas alteram superficialmente suas fórmulas apenas o suficiente para evitar os selos pretos de alerta de alto teor de sódio ou açúcares, sem mudar a essência ultra processada do produto.</p>
         
-        <p>O nosso catálogo a seguir é uma ferramenta de auditoria. Vamos expor, produto por produto, o que os relatórios e táticas de gestão dessas empresas não querem que você veja.</p>
+        <p>O nosso catálogo a seguir é uma ferramenta de auditoria. Vamos expor, produto por produto, o que os relatórios e táticas de gestão dessas empresas não querem que você veja, ultilizando um metodo proprio de calculo de risco com a seguinte formula:</p>
+
+        <p><strong>O indicie se baseia nos seguintes critérios:</strong> </p>
+
+        <p><strong>1. Pontos de Nutrientes Críticos (Até 100 pontos)</strong> Olhamos para o rótulo do produto e calculamos o quanto os nutrientes daquela porção consomem da meta diária recomendada pela OMS (Organização Mundial da Saúde):</p>
+
+        <li>Sódio (Vale até 40 pontos): Meta da OMS é < 2000mg/dia.</li>
+        
+        <li>Gordura Saturada (Vale até 40 pontos): Meta da OMS é < 22g/dia.</li>
+
+        <li>Açúcares Adicionados (Vale até 20 pontos): Meta da OMS é < 50g/dia.</li>
+        
+
+        <p><strong>2. O Multiplicador Ultraprocessado (x1,5)</strong> Se o alimento for um ultraprocessado comercial (Classificação NOVA 4), nós pegamos os pontos do passo anterior e multiplicamos por 1,5. Isso serve para o algoritmo penalizar a engenharia química do produto e a velocidade com que o corpo absorve essa gordura e açúcar.</p>
+
+        <p><strong>3. O Pedágio de Aditivos (+15 pontos fixos)</strong> Se na lista de ingredientes houver conservantes pesados, corantes ou realçadores de sabor (como os nitritos dos embutidos ou o glutamato do Doritos), o sistema soma +15 pontos de risco diretos no resultado final.</p>
+
+        <p><strong>Formula:</strong> Índice de Risco (%) = [(Pontos de Sódio + Pontos de Gordura + Pontos de Açúcar) x 1,5] + 15</p>
+
+        <p><strong>Sendo:</strong></p>
+
+        <li>Pontos de Sódio: (Quantidade de Sódio na embalagem / 2000) x 40.</li>
+
+        <li>Pontos de Gordura Saturada: (Quantidade de Gordura na embalagem / 22) x 40. </li>
+
+        <li>Pontos de Açúcar Adicionado: (Quantidade de Açúcar na embalagem / 50) x 20.</li>
 
     </div>
     """
+    
     
     col_espaco_esq, col_caixa, col_espaco_dir = st.columns([1, 3, 1])
     with col_caixa:
@@ -191,7 +220,7 @@ elif st.session_state['pagina_atual'] == 'manifesto':
 
 
 # ==========================================
-# TELA 2: SOBRE NÓS 
+# TELA 2: SOBRE NÓS
 # ==========================================
 elif st.session_state['pagina_atual'] == 'sobre':
     
@@ -209,22 +238,28 @@ elif st.session_state['pagina_atual'] == 'sobre':
         button[kind="secondary"] * {{ display: none !important; }}
         button[kind="secondary"]:hover {{ transform: scale(1.1) !important; }}
         
-        /* CSS dos Botões Laterais Beges (Agora maiores e mais elegantes) */
+        /* CSS da "Caixa" dos Botões Laterais Beges */
         button[kind="tertiary"], button[kind="tertiary"]:hover, button[kind="tertiary"]:active, button[kind="tertiary"]:focus {{
             background-color: #E2C792 !important;
-            color: #21130d !important;
             border-radius: 15px !important;
             border: 2px solid transparent !important;
-            height: 100px !important; /* Aumentei um pouco a altura */
+            height: 115px !important; /* Altura ajustada para simetria */
             width: 100% !important;
-            font-family: 'Georgia', serif !important; /* Fonte mais clássica e elegante */
-            font-weight: bold !important;
-            font-size: 22px !important; /* Fonte maior */
-            white-space: normal !important;
             transition: transform 0.2s !important;
             margin-bottom: 20px !important;
-            box-shadow: 0px 4px 6px rgba(0,0,0,0.15) !important; /* Sombra sutil para dar profundidade */
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.15) !important;
         }}
+        
+        /* O SEGREDO: CSS mirando diretamente no TEXTO do botão para forçar o tamanho */
+        button[kind="tertiary"] p {{
+            font-family: 'Georgia', serif !important; 
+            font-weight: bold !important;
+            font-size: 26px !important; /* <-- AQUI VOCÊ CONTROLA O TAMANHO REAL DA LETRA */
+            color: #21130d !important;
+            margin: 0 !important;
+            white-space: normal !important;
+        }}
+        
         button[kind="tertiary"]:hover {{
             transform: scale(1.03) !important;
             border: 2px solid #7B4E31 !important;
@@ -242,23 +277,24 @@ elif st.session_state['pagina_atual'] == 'sobre':
 
     st.write("\n" * 2)
 
+    # Textos do card central apra cada secao
     textos_sobre = {
         'missao': """
-        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Missão</h2>
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 24px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Missão</h2>
         <p style="font-size: 18px;">Desenvolver as tarefas e o projeto final de equipe de forma estruturada, aplicando conhecimentos analíticos e técnicos, destacando-se pela organização e praticidade na resolução de problemas, para atender às exigências da professora e gerar aprendizado prático de IADM.</p>
         """,
         
         'visao': """
-        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Visão</h2>
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 24px; margin-top: 0; font-family: 'Georgia', serif;">Nossa Visão</h2>
         <p style="font-size: 18px;">Ser reconhecida pelo corpo docente e pelos pares como uma equipe de excelência técnica e gestão eficiente, alcançando a nota máxima no Projeto Final e gerando um portfólio prático até o fim do semestre.</p>
         """,
         
         'valores': """
-        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">Nossos Valores</h2>
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 24px; margin-top: 0; font-family: 'Georgia', serif;">Nossos Valores</h2>
         <ul style="font-size: 18px; line-height: 1.8;">
             <li><strong>Pragmatismo:</strong> Foco na resolução de problemas e trabalho de qualidade.</li>
             <li><strong>Comprometimento com prazos:</strong> Respeito com os marcos do projeto.</li>
-            <li><strong>Comunicação direta e transparente:</strong> Feedbacks técnicos, baseados em dados e fatos</li>
+            <li><strong>Comunicação direta e transparente:</strong> Feedbacks técnicos, baseados em dados e fatos.</li>
             <li><strong>Qualidade técnica:</strong> Decisões baseadas em praticidade e fundamentos teóricos.</li>
         </ul>
         """,
@@ -268,16 +304,22 @@ elif st.session_state['pagina_atual'] == 'sobre':
         <div style="text-align: center; margin-bottom: 15px;">
             <img src="{foto_equipe_b64}" style="max-height: 160px; border-radius: 10px;">
         </div>
-        <p style="text-align: center;">Somos estudantes engajados em aplicar teorias da administração para auditar as táticas da indústria de alimentos.</p>
+        <p style="text-align: center;">Nosso grupo nasceu com o intuito de consientizar a populacao sobre os problemas modernos da industrailizacao alimenticia, somos apenas 4 alunos de Introducao a Adiministracao e usamos o que aprendemos em aula para criar todo o projeto “Fake Wonka” com esse intuito. O grupo apesar de pequeno é bastante diverso , craitivo, organizado e aplicado.</p>
         """,
         
-        'professor': """
-        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">O Professor</h2>
-        <p style="font-size: 18px;">Agradecemos ao nosso orientador da disciplina de Introdução à Administração por incentivar o senso crítico na análise de modelos organizacionais reais.</p>
+        'professora': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">A Professora</h2>
+        <p style="font-size: 18px;">Agradecemos a nossa professora pelos ensinamentos admistrativos que usamos para fazer esse projeto fluir, além de abrir nossos olhos para a realidade da administração do dia a dia e como funciona as organizacões.</p> 
+        <p>Um agradecimento especial a monitoria que sempre se mostrou disposta a ajudar e tirar nossas dúvidas durante o curso.</p>
+        """,
+
+        'materia': """
+        <h2 style="text-align: center; border-bottom: 2px solid #E2C792; padding-bottom: 10px; margin-top: 0; font-family: 'Georgia', serif;">A Matéria</h2>
+        <p style="font-size: 18px;">A disciplina de Introdução à Administração estabelece o arcabouço teórico-conceitual necessário para a gestão de organizações, abordando a administração como um processo sistêmico composto pelas funções de planejamento, organização, direção e controle. O estudo fundamenta-se na evolução do pensamento administrativo, analisando como as organizações transitaram de estruturas rígidas para modelos ágeis e adaptáveis.</p>
+        <p style="font-size: 18px;">Nos ajudou a consolidar nossa compreensão dos pilares organizacionais, e o desenvolvimento do nosso projeto de site permitiu elevar essa análise a um novo patamar, aprimorando nossa visão crítica sobre as dinâmicas complexas do mercado industrial e administrativo.</p>
         """
     }
 
-    
     col_vazia_esq, col_esq, col_meio, col_dir, col_vazia_dir = st.columns([0.5, 1.2, 2.2, 1.2, 0.5])
     
     with col_esq:
@@ -296,24 +338,25 @@ elif st.session_state['pagina_atual'] == 'sobre':
     with col_meio:
         texto_selecionado = textos_sobre[st.session_state['aba_sobre']]
         
-        
+        # Card central com as informacoes do cards laterais
         html_caixa = f"""
-        <div style="background-color: #7B4E31; border-radius: 15px; padding: 40px; color: white; height: 340px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); font-family: Arial, sans-serif; line-height: 1.6;">
+        <div style="background-color: #7B4E31; border-radius: 15px; padding: 40px; color: white; height: 416px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); font-family: Arial, sans-serif; line-height: 1.6;">
             {texto_selecionado}
         </div>
         """
         st.markdown(textwrap.dedent(html_caixa), unsafe_allow_html=True)
 
     with col_dir:
-        
-        st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
-        
         if st.button("O Grupo", type="tertiary", use_container_width=True):
             st.session_state['aba_sobre'] = 'grupo'
             st.rerun()
             
-        if st.button("O Professor", type="tertiary", use_container_width=True):
-            st.session_state['aba_sobre'] = 'professor'
+        if st.button("A Professora", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'professora'
+            st.rerun()
+
+        if st.button("A Matéria", type="tertiary", use_container_width=True):
+            st.session_state['aba_sobre'] = 'materia'
             st.rerun()
 
 
@@ -366,7 +409,7 @@ elif st.session_state['pagina_atual'] == 'catalogo':
 
     st.write("\n")
     
-    
+    # Barra de pesquisa 
     col_pesq_esq, col_busca, col_pesq_dir = st.columns([1, 2.5, 1])
     with col_busca:
         busca = st.text_input("Buscar", placeholder="Pesquise aqui...", label_visibility="collapsed")
@@ -379,7 +422,7 @@ elif st.session_state['pagina_atual'] == 'catalogo':
         for index, row in resultados.iterrows():
             foto_produto_b64 = carregar_imagem_base64(str(row['Caminho_Imagem']))
             
-            
+            # Espaçamento para alinhar o catalogo
             col_vazia_esq, col_img, col_info, col_vazia_dir = st.columns([1, 1, 2.5, 1])
             
             with col_img:
@@ -397,13 +440,12 @@ elif st.session_state['pagina_atual'] == 'catalogo':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                
                 if st.button(" ", key=f"btn_{index}", type="primary", use_container_width=True):
                     st.session_state['alimento_selecionado'] = row
                     st.session_state['pagina_atual'] = 'descricao'
                     st.rerun()
             
-            
+            # linha divisoria
             st.markdown("<hr style='margin: 20px auto; width: 70%; border-color: #7B4E31; opacity: 0.25;'>", unsafe_allow_html=True)
             
     else:
@@ -450,7 +492,7 @@ elif st.session_state['pagina_atual'] == 'descricao':
         values=[pct_risco, 100 - pct_risco],
         labels=["Índice de Risco", "Segurança"],
         hole=0.75, 
-        marker_colors=["#C00000", "#4A2F24"], 
+        marker_colors=["#8b0232", "#ae5a66"], 
         textinfo='none', 
         hoverinfo='label+percent'
     ))
