@@ -370,7 +370,7 @@ elif st.session_state['pagina_atual'] == 'catalogo':
         /* O Botão do Topo (Voltar) */
         button[kind="secondary"], button[kind="secondary"]:hover, button[kind="secondary"]:active, button[kind="secondary"]:focus, button[kind="secondary"]:disabled {{
             background-color: transparent !important;
-            background-image: url('{botao_voltar_b64}') !important;
+            background-image: url('{botao_home_b64}') !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
