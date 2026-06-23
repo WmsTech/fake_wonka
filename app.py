@@ -207,7 +207,7 @@ elif st.session_state['pagina_atual'] == 'desclaimer':
         <li>Pontos de Açúcar Adicionado: (Quantidade de Açúcar na embalagem / 50) x 20.</li>
         
         
-        <p style="font-size: 14px;"> Para mais informações sobre o grupo e a sua Identidade Organizacional, visite a seção “Sobre Nós” na página inicial.<strong></p>
+        <p style="font-size: 18px;"> <strong>Para mais informações sobre o grupo e a sua Identidade Organizacional, visite a seção “Sobre Nós” na página inicial.<strong></p>
         
     </div>
     """
