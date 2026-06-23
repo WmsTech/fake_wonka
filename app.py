@@ -306,10 +306,10 @@ elif st.session_state['pagina_atual'] == 'sobre':
         </div>
         <p style="font-size: 18px;"> Nosso grupo nasceu com o intuito de conscientizar a população sobre os problemas modernos da industrialização alimentícia. O grupo é composto de apenas 4 alunos de Introducao a Administração, e usamos o que aprendemos em aula para criar todo o projeto “Fake Wonka” com esse intuito. O grupo apesar de pequeno é bastante diverso , criativo, organizado e aplicado.</p>
         <p> O grupo então é composto por: </p>
-        <li> Danielle Cristine Tavera </li>
-        <li> Misael Gomes Da Silva </li>
-        <li> Ronald Rodrigues Barbosa </li>
-        <li> Washington Marinho dos Santos </li>
+        <li> Danielle Cristine Tavera - Gerente de Documentação </li>
+        <li> Misael Gomes Da Silva - Gerente de Desempenho</li>
+        <li> Ronald Rodrigues Barbosa - Líder do Grupo</li>
+        <li> Washington Marinho dos Santos - Gerente de Tarefas/Criador do Site </li>
         """,
         
         'professora': """
